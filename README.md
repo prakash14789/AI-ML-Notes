@@ -1,5 +1,7 @@
 # 🤖 AI & Machine Learning Notes
 
+![AI & Machine Learning Notes Banner](assets/banner.png)
+
 Welcome to my personal AI & Machine Learning knowledge repository! This repository contains a structured compilation of lecture notes, consolidated sheets, labs, and study material covering everything from Python programming to advanced Deep Learning, LLMs, and MLOps.
 
 ---
