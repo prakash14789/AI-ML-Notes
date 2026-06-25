@@ -2,7 +2,21 @@
 
 ![AI & Machine Learning Notes Banner](assets/banner.png)
 
+<p align="center">
+  <a href="https://github.com/prakash14789/AI-ML-Notes"><img src="https://img.shields.io/github/repo-size/prakash14789/AI-ML-Notes?style=for-the-badge&color=blue" alt="Repo Size" /></a>
+  <a href="https://github.com/prakash14789/AI-ML-Notes"><img src="https://img.shields.io/github/last-commit/prakash14789/AI-ML-Notes?style=for-the-badge&color=purple" alt="Last Commit" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/prakash14789/AI-ML-Notes?style=for-the-badge&color=green" alt="License" /></a>
+  <a href="https://www.python.org"><img src="https://img.shields.io/badge/Python-3.x-blue?style=for-the-badge&logo=python&logoColor=white" alt="Python" /></a>
+</p>
+
 Welcome to my personal AI & Machine Learning knowledge repository! This repository contains a structured compilation of lecture notes, consolidated sheets, labs, and study material covering everything from Python programming to advanced Deep Learning, LLMs, and MLOps.
+
+---
+
+## 👤 About Me & Program
+- **Author**: Prakash (prakash14789)
+- **Program**: IIT Patna - Masai AI/ML Course
+- **Goal**: Mastering classical machine learning, deep learning, NLP, large language models, and scalable MLOps deployments.
 
 ---
 
