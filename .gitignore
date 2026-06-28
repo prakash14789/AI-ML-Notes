@@ -21,3 +21,6 @@ Thumbs.db
 
 # Temp scripts
 generate_readme.py
+scratch/
+notes_index_*.pkl
+
