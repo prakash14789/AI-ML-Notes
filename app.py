@@ -302,6 +302,8 @@ with tab1:
                         st.markdown(response_text)
                         st.session_state.chat_history.append({"role": "assistant", "content": response_text})
                     else:
+                        chunks_only = [item[0] for item in retrieved]
+                        try:
                             response_text = generate_rag_answer(
                                 query, 
                                 chunks_only, 
