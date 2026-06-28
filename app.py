@@ -30,7 +30,7 @@ st.markdown("""
         font-family: 'Inter', sans-serif;
     }
     
-    h1, h2, h3 {
+    h1, h2, h3, h4, h5, h6 {
         font-family: 'Outfit', sans-serif;
         font-weight: 700;
         letter-spacing: -0.5px;
@@ -38,14 +38,15 @@ st.markdown("""
     
     /* Header style */
     .header-container {
-        padding: 1.5rem;
-        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        padding: 2rem;
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #2563eb 100%);
         border-radius: 16px;
         color: white;
         margin-bottom: 2rem;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
         position: relative;
         overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.05);
     }
     
     .header-container::after {
@@ -55,67 +56,160 @@ st.markdown("""
         left: -50%;
         width: 200%;
         height: 200%;
-        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+        background: radial-gradient(circle, rgba(37, 99, 235, 0.15) 0%, transparent 60%);
         pointer-events: none;
     }
     
     /* Sidebar premium box */
     section[data-testid="stSidebar"] {
-        background-color: #f8fafc;
-        border-right: 1px solid #e2e8f0;
+        background-color: #0f172a;
+        border-right: 1px solid #1e293b;
+    }
+    section[data-testid="stSidebar"] * {
+        color: #f8fafc !important;
+    }
+    section[data-testid="stSidebar"] input, section[data-testid="stSidebar"] select {
+        background-color: #1e293b !important;
+        border-color: #334155 !important;
+        color: #f8fafc !important;
+        border-radius: 8px !important;
     }
     
     /* Custom cards for metrics */
     .metric-card {
-        background-color: white;
+        background-color: #ffffff;
         border: 1px solid #e2e8f0;
-        border-radius: 12px;
-        padding: 1.25rem;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+        border-radius: 16px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.02);
         text-align: center;
-        transition: all 0.3s ease;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
     
     .metric-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 15px rgba(0,0,0,0.04);
+        transform: translateY(-4px);
+        box-shadow: 0 12px 25px rgba(0,0,0,0.06);
         border-color: #cbd5e1;
     }
     
     .metric-value {
         font-family: 'Outfit', sans-serif;
-        font-size: 2.25rem;
+        font-size: 2.5rem;
         font-weight: 800;
-        color: #1e3c72;
+        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
         line-height: 1;
-        margin-bottom: 0.25rem;
+        margin-bottom: 0.5rem;
     }
     
     .metric-label {
-        font-size: 0.85rem;
+        font-size: 0.8rem;
         color: #64748b;
         text-transform: uppercase;
-        letter-spacing: 1px;
+        letter-spacing: 1.5px;
+        font-weight: 600;
     }
     
     /* Source citation link style */
     .source-pill {
         display: inline-block;
-        background-color: #f1f5f9;
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
         border: 1px solid #cbd5e1;
-        border-radius: 20px;
-        padding: 2px 10px;
+        border-radius: 24px;
+        padding: 4px 12px;
         font-size: 0.75rem;
         font-weight: 600;
         color: #475569;
-        margin-right: 6px;
-        margin-bottom: 6px;
-        transition: all 0.2s ease;
+        margin-right: 8px;
+        margin-bottom: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
     
     .source-pill:hover {
-        background-color: #e2e8f0;
+        transform: translateY(-1px);
+        background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+        border-color: #94a3b8;
         color: #0f172a;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    }
+    
+    /* Tabs customization */
+    div[data-testid="stTabBar"] {
+        background-color: #f8fafc;
+        border-radius: 12px;
+        padding: 0.25rem;
+        border: 1px solid #e2e8f0;
+        margin-bottom: 1.5rem;
+    }
+    div[data-testid="stTabBar"] button {
+        font-family: 'Outfit', sans-serif !important;
+        font-size: 1rem !important;
+        font-weight: 600 !important;
+        color: #64748b !important;
+        border-radius: 8px !important;
+        border: none !important;
+        padding: 0.5rem 1.25rem !important;
+        transition: all 0.2s ease !important;
+    }
+    div[data-testid="stTabBar"] button[aria-selected="true"] {
+        background-color: #ffffff !important;
+        color: #2563eb !important;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.04) !important;
+    }
+    
+    /* Premium button styles */
+    div.stButton > button {
+        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 10px !important;
+        padding: 0.6rem 1.5rem !important;
+        font-weight: 600 !important;
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15) !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        width: 100%;
+    }
+    div.stButton > button:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 8px 20px rgba(37, 99, 235, 0.25) !important;
+        background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%) !important;
+    }
+    div.stButton > button:active {
+        transform: translateY(0px) !important;
+    }
+    
+    /* Custom style for chatbot container */
+    div[data-testid="stChatMessage"] {
+        background-color: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 1.25rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.01);
+    }
+    
+    div[data-testid="stChatMessage"][data-user="true"] {
+        background-color: #f1f5f9;
+        border-color: #cbd5e1;
+    }
+    
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
     }
 </style>
 """, unsafe_allow_html=True)
