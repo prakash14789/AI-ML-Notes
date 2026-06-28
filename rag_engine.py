@@ -1,6 +1,7 @@
 import os
 import re
 import pickle
+import requests
 import numpy as np
 from typing import List, Dict, Any, Tuple
 
@@ -299,7 +300,14 @@ def build_notes_index(notes_dir: str, provider: str = "local_tfidf", api_key: st
     return vector_store
 
 
-def generate_rag_answer(query: str, retrieved_chunks: List[Dict[str, Any]], provider: str = "gemini", api_key: str = None) -> str:
+def generate_rag_answer(
+    query: str, 
+    retrieved_chunks: List[Dict[str, Any]], 
+    provider: str = "gemini", 
+    api_key: str = None,
+    ollama_model: str = "llama3.2:1b",
+    ollama_url: str = "http://localhost:11434"
+) -> str:
     """Uses the LLM provider to synthesize an answer based on the retrieved context chunks."""
     if not retrieved_chunks:
         return "I could not find any relevant information in your notes to answer this question."
@@ -364,10 +372,38 @@ def generate_rag_answer(query: str, retrieved_chunks: List[Dict[str, Any]], prov
         )
         return response.choices[0].message.content
 
+    elif provider == "ollama":
+        # Call local Ollama chat API
+        url = ollama_url.rstrip('/')
+        payload = {
+            "model": ollama_model,
+            "messages": [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt}
+            ],
+            "stream": False,
+            "options": {
+                "temperature": 0.3
+            }
+        }
+        try:
+            response = requests.post(f"{url}/api/chat", json=payload, timeout=45)
+            response.raise_for_status()
+            res_json = response.json()
+            return res_json.get("message", {}).get("content", "Error: Empty response from Ollama.")
+        except Exception as e:
+            return (
+                f"⚠️ **Error connecting to local Ollama server**: {e}\n\n"
+                f"Please ensure:\n"
+                f"1. The Ollama application is running on your machine (run `ollama serve` or open the Ollama app).\n"
+                f"2. You have downloaded the model by running: `ollama pull {ollama_model}` in your terminal.\n"
+                f"3. The API URL `{ollama_url}` is correct."
+            )
+
     else:
         # Fallback offline answering (just summaries of retrieved chunks)
         summary = "### Offline Mode (Citations Only)\n"
-        summary += "To see AI-generated synthesis, please input your API Key in the sidebar. Below are the most relevant snippets found in your notes:\n\n"
+        summary += "To see AI-generated synthesis, please input your API Key in the sidebar or run Ollama locally. Below are the most relevant snippets found in your notes:\n\n"
         for i, chunk in enumerate(retrieved_chunks):
             meta = chunk.get("metadata", {})
             summary += f"📄 **{meta.get('clean_title')}** (Section: *{meta.get('header')}*, Week: {meta.get('week')})\n"

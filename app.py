@@ -148,16 +148,29 @@ with st.sidebar:
     
     llm_provider = st.selectbox(
         "Answer Generation LLM",
-        options=["gemini", "openai", "offline"],
-        format_func=lambda x: "Gemini 2.5 Flash" if x == "gemini" else ("GPT-4o Mini" if x == "openai" else "Offline Mode (Citations Only)")
+        options=["gemini", "openai", "ollama", "offline"],
+        format_func=lambda x: (
+            "Gemini 2.5 Flash" if x == "gemini" else (
+                "GPT-4o Mini" if x == "openai" else (
+                    "Ollama Local LLM (Offline)" if x == "ollama" else "Offline Mode (Citations Only)"
+                )
+            )
+        )
     )
 
-    # API Keys (conditional visibility)
+    # API Keys & Local Model Settings (conditional visibility)
     api_key = None
+    ollama_model = "llama3.2:1b"
+    ollama_url = "http://localhost:11434"
+    
     if provider == "gemini" or llm_provider == "gemini":
         api_key = st.text_input("Gemini API Key", type="password", help="Grab an API key from Google AI Studio")
     elif provider == "openai" or llm_provider == "openai":
         api_key = st.text_input("OpenAI API Key", type="password", help="Grab an API key from OpenAI Console")
+        
+    if llm_provider == "ollama":
+        ollama_model = st.text_input("Ollama Model Name", value="llama3.2:1b", help="Make sure this model is downloaded locally using 'ollama pull <model_name>'")
+        ollama_url = st.text_input("Ollama Server URL", value="http://localhost:11434", help="Default port is 11434")
 
     st.markdown("---")
     st.subheader("⚙️ Retrieval Parameters")
@@ -289,9 +302,14 @@ with tab1:
                         st.markdown(response_text)
                         st.session_state.chat_history.append({"role": "assistant", "content": response_text})
                     else:
-                        chunks_only = [item[0] for item in retrieved]
-                        try:
-                            response_text = generate_rag_answer(query, chunks_only, provider=llm_provider, api_key=api_key)
+                            response_text = generate_rag_answer(
+                                query, 
+                                chunks_only, 
+                                provider=llm_provider, 
+                                api_key=api_key,
+                                ollama_model=ollama_model,
+                                ollama_url=ollama_url
+                            )
                         except Exception as e:
                             response_text = f"An error occurred during LLM response generation: {e}"
                         
