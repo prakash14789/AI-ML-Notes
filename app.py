@@ -266,12 +266,19 @@ with st.sidebar:
     ollama_model = "llama3.2:1b"
     ollama_url = "http://localhost:11434"
     
+    env_gemini_key = os.environ.get("GEMINI_API_KEY", "")
+    env_openai_key = os.environ.get("OPENAI_API_KEY", "")
+    
     if provider == "gemini" or llm_provider == "gemini":
-        gemini_default = os.environ.get("GEMINI_API_KEY", "")
-        api_key = st.text_input("Gemini API Key", value=gemini_default, type="password", help="Grab an API key from Google AI Studio")
+        if env_gemini_key:
+            api_key = env_gemini_key
+        else:
+            api_key = st.text_input("Gemini API Key", type="password", help="Grab an API key from Google AI Studio")
     elif provider == "openai" or llm_provider == "openai":
-        openai_default = os.environ.get("OPENAI_API_KEY", "")
-        api_key = st.text_input("OpenAI API Key", value=openai_default, type="password", help="Grab an API key from OpenAI Console")
+        if env_openai_key:
+            api_key = env_openai_key
+        else:
+            api_key = st.text_input("OpenAI API Key", type="password", help="Grab an API key from OpenAI Console")
         
     if llm_provider == "ollama":
         ollama_model = st.text_input("Ollama Model Name", value="llama3.2:1b", help="Make sure this model is downloaded locally using 'ollama pull <model_name>'")
