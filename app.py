@@ -199,6 +199,10 @@ st.markdown("""
         box-shadow: 0 2px 8px rgba(0,0,0,0.01);
     }
     
+    div[data-testid="stChatMessage"] * {
+        color: #0f172a !important;
+    }
+    
     div[data-testid="stChatMessage"][data-user="true"] {
         background-color: #f1f5f9;
         border-color: #cbd5e1;
