@@ -4,6 +4,15 @@ import pandas as pd
 import numpy as np
 import time
 
+# Load environment variables from .env file if it exists
+if os.path.exists(".env"):
+    with open(".env", "r", encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if line and not line.startswith("#") and "=" in line:
+                k, v = line.split("=", 1)
+                os.environ[k.strip()] = v.strip().strip('"').strip("'")
+
 # Import RAG engine components
 from rag_engine import (
     NumpyVectorStore, 
@@ -258,9 +267,11 @@ with st.sidebar:
     ollama_url = "http://localhost:11434"
     
     if provider == "gemini" or llm_provider == "gemini":
-        api_key = st.text_input("Gemini API Key", type="password", help="Grab an API key from Google AI Studio")
+        gemini_default = os.environ.get("GEMINI_API_KEY", "")
+        api_key = st.text_input("Gemini API Key", value=gemini_default, type="password", help="Grab an API key from Google AI Studio")
     elif provider == "openai" or llm_provider == "openai":
-        api_key = st.text_input("OpenAI API Key", type="password", help="Grab an API key from OpenAI Console")
+        openai_default = os.environ.get("OPENAI_API_KEY", "")
+        api_key = st.text_input("OpenAI API Key", value=openai_default, type="password", help="Grab an API key from OpenAI Console")
         
     if llm_provider == "ollama":
         ollama_model = st.text_input("Ollama Model Name", value="llama3.2:1b", help="Make sure this model is downloaded locally using 'ollama pull <model_name>'")

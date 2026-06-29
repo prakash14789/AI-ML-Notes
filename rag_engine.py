@@ -5,6 +5,16 @@ import requests
 import numpy as np
 from typing import List, Dict, Any, Tuple
 
+# Load environment variables from .env file if it exists
+if os.path.exists(".env"):
+    with open(".env", "r", encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if line and not line.startswith("#") and "=" in line:
+                k, v = line.split("=", 1)
+                os.environ[k.strip()] = v.strip().strip('"').strip("'")
+
+
 # Optional imports for API-based models
 try:
     from google import genai
@@ -44,6 +54,11 @@ class NumpyVectorStore:
         Embeds a list of chunks and stores them.
         Each chunk is a dict: {"text": str, "metadata": dict}
         """
+        if not api_key:
+            if self.provider == "gemini":
+                api_key = os.environ.get("GEMINI_API_KEY")
+            elif self.provider == "openai":
+                api_key = os.environ.get("OPENAI_API_KEY")
         self.chunks.extend(chunks)
         texts = [c["text"] for c in chunks]
 
@@ -105,6 +120,11 @@ class NumpyVectorStore:
         Searches for the top-k most similar chunks.
         Returns a list of tuples: (chunk, score)
         """
+        if not api_key:
+            if self.provider == "gemini":
+                api_key = os.environ.get("GEMINI_API_KEY")
+            elif self.provider == "openai":
+                api_key = os.environ.get("OPENAI_API_KEY")
         if not self.chunks or self.embeddings.size == 0:
             return []
 
@@ -192,16 +212,33 @@ def clean_doc_title(filename: str) -> str:
     return title.strip()
 
 
-def parse_week_and_instructor(title: str) -> Tuple[int, str]:
-    """Tries to extract Week number and Instructor Name from notes titles."""
-    week_match = re.search(r'Week\s*(\d+)', title, re.IGNORECASE)
+def parse_week_and_instructor(title: str, first_line: str = "") -> Tuple[int, str]:
+    """Tries to extract Week number and Instructor Name from notes titles and first line of file."""
+    search_text = f"{title} {first_line}"
+    week_match = re.search(r'Week\s*(\d+)', search_text, re.IGNORECASE)
     week_num = int(week_match.group(1)) if week_match else 0
     
-    # Common instructors in the files: Sofi Altamsh, Aashik Arun Bobade, Varun Raste, Suman, Chandan, adarsha
+    # Common instructors in the files
+    instructors = [
+        "Sofi Altamsh", "Aashik Arun Bobade", "Varun Raste", "Suman", 
+        "Chandan B K", "Chandan", "adarsha khanal", "adarsha", "Nishut", 
+        "Dr. Surya Prakash", "Surya Prakash", "Surya"
+    ]
+    
     instructor = "Unknown"
-    for inst in ["Sofi Altamsh", "Aashik Arun Bobade", "Varun Raste", "Suman", "Chandan", "adarsha", "Nishut", "Surya"]:
-        if re.search(inst, title, re.IGNORECASE):
-            instructor = inst
+    for inst in instructors:
+        if re.search(re.escape(inst), search_text, re.IGNORECASE):
+            # Normalize to clean display names
+            if "Surya" in inst:
+                instructor = "Dr. Surya Prakash"
+            elif "Chandan" in inst:
+                instructor = "Chandan B K"
+            elif "adarsha" in inst:
+                instructor = "Adarsha Khanal"
+            elif "Varun" in inst:
+                instructor = "Varun Raste"
+            else:
+                instructor = inst
             break
             
     return week_num, instructor
@@ -214,7 +251,6 @@ def chunk_markdown_file(file_path: str, chunk_size_words: int = 150, overlap_wor
     """
     filename = os.path.basename(file_path)
     clean_title = clean_doc_title(filename)
-    week_num, instructor = parse_week_and_instructor(clean_title)
     
     try:
         with open(file_path, 'r', encoding='utf-8') as f:
@@ -222,6 +258,9 @@ def chunk_markdown_file(file_path: str, chunk_size_words: int = 150, overlap_wor
     except Exception as e:
         print(f"Error reading {file_path}: {e}")
         return []
+
+    first_line = lines[0].strip() if lines else ""
+    week_num, instructor = parse_week_and_instructor(clean_title, first_line)
 
     # Clean the lines (remove visual line-number headers if prepended by system, though raw shouldn't have them)
     cleaned_lines = []
@@ -309,6 +348,11 @@ def generate_rag_answer(
     ollama_url: str = "http://localhost:11434"
 ) -> str:
     """Uses the LLM provider to synthesize an answer based on the retrieved context chunks."""
+    if not api_key:
+        if provider == "gemini":
+            api_key = os.environ.get("GEMINI_API_KEY")
+        elif provider == "openai":
+            api_key = os.environ.get("OPENAI_API_KEY")
     if not retrieved_chunks:
         return "I could not find any relevant information in your notes to answer this question."
 
